@@ -16,26 +16,26 @@ jobs:
       - name: Cleanup workspace
         uses: rokibhasansagar/slimhub_actions@main
 
-      - name: Set Git Configs & Secrets
+      - name: step 3
         run: |
           git config --global user.email ${{ secrets.GHMAIL }}
           git config --global user.name ${{ secrets.GHUSER }}
           git config --global credential.helper store
           echo "https://${{ secrets.GHUSER }}:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
-      - name: Clone Mirror Repo
+      - name: step 4
         run: |
           git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.GHUSER }}/${{ secrets.REPO }} source
-      - name: Compile Docker
+      - name: step 5
         run: |
           cd source || exit 1
           docker container prune --force || true
           docker build . --rm --force-rm --compress --no-cache=true --pull --file Dockerfile -t mirror-bot
-      - name: Run bot
+      - name: Run step
         continue-on-error: true
-        timeout-minutes: 340
+        timeout-minutes: 500
         run: |
           docker run --privileged --rm -i mirror-bot
-      - name: Loop Workflow
+      - name: Loop 
         continue-on-error: true
         run: |
           git clone https://${{ secrets.GH_TOKEN }}@github.com/${GITHUB_REPOSITORY} loop
